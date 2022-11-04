@@ -20,7 +20,7 @@ from typing import Dict, List
 import yaml
 import re
 
-from JupyterReviewer.ReviewData import ReviewData
+from JupyterReviewer.ReviewDataInterface import ReviewDataInterface
 from JupyterReviewer.Data import DataAnnotation
 from JupyterReviewer.ReviewDataApp import ReviewDataApp, AppComponent
 from JupyterReviewer.ReviewerTemplate import ReviewerTemplate
@@ -592,7 +592,7 @@ class PatientReviewer(ReviewerTemplate):
 
         app.add_component(gen_mutation_table_app_component(), custom_colors=custom_colors)
 
-        if 'build_tree_posterior_fn' and 'cluster_ccfs_fn' in list(self.review_data.data.participant_df):
+        if 'build_tree_posterior_fn' and 'cluster_ccfs_fn' in list(self.review_data_interface.data.participant_df):
             app.add_component(gen_phylogic_app_component(), drivers_fn=drivers_fn)
 
         app.add_component(gen_cnv_plot_app_component(), preprocess_data_dir=preprocess_data_dir)
@@ -602,5 +602,5 @@ class PatientReviewer(ReviewerTemplate):
 
     def set_default_autofill(self):
         """Set default autofill functionality for annotations """
-        if 'build_tree_posterior_fn' and 'cluster_ccfs_fn' in list(self.review_data.data.participant_df):
+        if 'build_tree_posterior_fn' and 'cluster_ccfs_fn' in list(self.review_data_interface.data.participant_df):
             self.add_autofill('Phylogic Tree', State('tree-dropdown', 'value'), 'Selected Tree (idx)')
