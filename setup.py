@@ -25,6 +25,6 @@ setuptools.setup(
     python_requires=">=3.6",
     install_requires = ['JupyterReviewer==0.0.2',
                         'firecloud-dalmatian',
-                        'yaml']
+                        'pyyaml']
 )   
 
