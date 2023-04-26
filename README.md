@@ -35,7 +35,7 @@ See [UserPatientReviewer.ipynb](https://github.com/getzlab/PatientReviewer/tree/
 
 See `PatientReviewer/Reviewers` to see available pre-built reviewer options.
 
-See `PatientReviewer/DataTypes` to see pre-built data configurations for mutation review.
+See `PatientReviewer/DataTypes` to see pre-built data configurations for patient review.
 
 
 # Custom and advanced usage
