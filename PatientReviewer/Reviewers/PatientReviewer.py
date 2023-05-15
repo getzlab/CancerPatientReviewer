@@ -13,21 +13,21 @@ import pickle
 import os
 from dash import html
 from dash import Dash, dash_table
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Output, State
 import dash_bootstrap_components as dbc
 import dalmatian
 from typing import Dict, List
 import yaml
 import re
 
-from JupyterReviewer.ReviewDataInterface import ReviewDataInterface
 from JupyterReviewer.Data import DataAnnotation
 from JupyterReviewer.ReviewDataApp import ReviewDataApp, AppComponent
 from JupyterReviewer.ReviewerTemplate import ReviewerTemplate
 from JupyterReviewer.AppComponents.MutationTableComponent import gen_mutation_table_app_component
 from JupyterReviewer.AppComponents.PhylogicComponents import gen_phylogic_app_component
-from JupyterReviewer.AppComponents.CNVPlotComponent import gen_cnv_plot_app_component, gen_preloaded_cnv_plot
+from JupyterReviewer.AppComponents.CNVPlotComponent import gen_cnv_plot_app_component
 from JupyterReviewer.DataTypes.PatientSampleData import PatientSampleData
+from JupyterReviewer.AnnotationDisplayComponent import NumberAnnotationDisplay, SelectAnnotationDisplay, TextAreaAnnotationDisplay, RadioitemAnnotationDisplay, ChecklistAnnotationDisplay, TextAnnotationDisplay
 
 def validate_string_list(x):
     if type(x) == str:
@@ -433,22 +433,18 @@ class PatientReviewer(ReviewerTemplate):
         participant_df: pd.DataFrame,
         sample_df: pd.DataFrame,
         annot_df: pd.DataFrame = None,
-        annot_col_config_dict: Dict = None,
         history_df: pd.DataFrame = None,
-        review_data_annotation_dict: {str: DataAnnotation} = {},
-        preprocess_data_dir='.',
-        load_figs_mafs=True,
+        annot_col_config_dict: Dict = None,
+        # review_data_annotation_dict: {str: DataAnnotation} = {},
         index: List = None
     ) -> PatientSampleData:
-
         """
-
         Parameters
         ----------
         description: str
             Describe the review session. This is useful if you copy the history of this object to a new review data
             object
-        participnat_df
+        participant_df
             dataframe containing participant data. this will be the primary dataframe
         sample_df
             dataframe containing sample data
@@ -458,71 +454,67 @@ class PatientReviewer(ReviewerTemplate):
             Dictionary specifying active annotation columns and validation configurations
         history_df: pd.DataFrame
             Dataframe of with previous/prefilled history
-        review_data_annotation_dict
-            dictionary containing annotation fields
-        preprocess_data_dir
-            directory for preproccessing data to be stored
-        load_figs_mafs: bool
-            Should cnv figures and maf dataframes be computed again? (default True)
         index: List
-            List of values to annotate. participant_df's index
+            List of values to annotate, specifically the index of participant_df
 
         Returns
         -------
         ReviewData object
 
         """
-        cnv_figs_dir = f'{preprocess_data_dir}/cnv_figs'  # todo make this logic better - what if all files don't exist?
-        if not os.path.exists(cnv_figs_dir):
-            os.makedirs(cnv_figs_dir)
-            load_figs_mafs = True
-        else:
-            print(f'cnv figs directory already exists: {cnv_figs_dir}')
+        # cnv_figs_dir = f'{preprocess_data_dir}/cnv_figs'  # todo make this logic better - what if all files don't exist?
+        # if not os.path.exists(cnv_figs_dir):
+        #     os.makedirs(cnv_figs_dir)
+        #     load_figs_mafs = True
+        # else:
+        #     print(f'cnv figs directory already exists: {cnv_figs_dir}')
+        #
+        # maf_dir = f'{preprocess_data_dir}/maf_df'
+        # if not os.path.exists(maf_dir):
+        #     os.makedirs(maf_dir)
+        #     load_figs_mafs = True
+        # else:
+        #     print(f'Maf directory already exists: {maf_dir}')
+        #
+        # participant_list = participant_df.index.tolist()
+        # sample_cnv_list = []
+        # participant_maf_list = []
+        # if load_figs_mafs:
+        #     for participant_id in participant_list:
+        #         sample_cnv_series, participant_maf_series = gen_preloaded_cnv_plot(participant_df, participant_id,
+        #                                                                            sample_df, preprocess_data_dir)
+        #         sample_cnv_list.append(sample_cnv_series)
+        #         participant_maf_list.append(participant_maf_series)
+        #
+        # else:  # todo - smarter "job avoidance"
+        #     for participant_id in participant_list:
+        #         maf_fn = f'{preprocess_data_dir}/maf_df/{participant_id}.maf_df.pkl'
+        #         participant_maf_list.append(pd.Series(maf_fn, [participant_id]))
+        #
+        #         sample_id_l = sample_df[sample_df['participant_id'] == participant_id].index
+        #         cnv_fn_l = [f'{preprocess_data_dir}/cnv_figs/{sample_id}.cnv_fig.pkl' for sample_id in sample_id_l]
+        #         sample_cnv_list.append(pd.Series(cnv_fn_l, sample_id_l))
+        #
+        # participant_maf_list = pd.concat(participant_maf_list)
+        # participant_df['maf_df_pickle'] = participant_maf_list
+        # sample_cnv_list = pd.concat(sample_cnv_list)
+        # sample_df['cnv_fig_pickle'] = sample_cnv_list
+        #
+        # if not all([os.path.isfile(v) for v in participant_maf_list.values.tolist() + sample_cnv_list.values.tolist()]):
+        #     raise ValueError(f'Not all participant mafs and sample cnv pickle files are present in {preprocess_data_dir}.\n'
+        #                      f'Please re-run with `load_figs_mafs=True` or add missing files.')
+        if index is None:
+            index = participant_df.index.tolist()
 
-        maf_dir = f'{preprocess_data_dir}/maf_df'
-        if not os.path.exists(maf_dir):
-            os.makedirs(maf_dir)
-            load_figs_mafs = True
-        else:
-            print(f'Maf directory already exists: {maf_dir}')
-
-        participant_list = participant_df.index.tolist()
-        sample_cnv_list = []
-        participant_maf_list = []
-        if load_figs_mafs:
-            for participant_id in participant_list:
-                sample_cnv_series, participant_maf_series = gen_preloaded_cnv_plot(participant_df, participant_id,
-                                                                                   sample_df, preprocess_data_dir)
-                sample_cnv_list.append(sample_cnv_series)
-                participant_maf_list.append(participant_maf_series)
-
-        else:  # todo - smarter "job avoidance"
-            for participant_id in participant_list:
-                maf_fn = f'{preprocess_data_dir}/maf_df/{participant_id}.maf_df.pkl'
-                participant_maf_list.append(pd.Series(maf_fn, [participant_id]))
-
-                sample_id_l = sample_df[sample_df['participant_id'] == participant_id].index
-                cnv_fn_l = [f'{preprocess_data_dir}/cnv_figs/{sample_id}.cnv_fig.pkl' for sample_id in sample_id_l]
-                sample_cnv_list.append(pd.Series(cnv_fn_l, sample_id_l))
-
-        participant_maf_list = pd.concat(participant_maf_list)
-        participant_df['maf_df_pickle'] = participant_maf_list
-        sample_cnv_list = pd.concat(sample_cnv_list)
-        sample_df['cnv_fig_pickle'] = sample_cnv_list
-        
-        if not all([os.path.isfile(v) for v in participant_maf_list.values.tolist() + sample_cnv_list.values.tolist()]):
-            raise ValueError(f'Not all participant mafs and sample cnv pickle files are present in {preprocess_data_dir}.\n'
-                             f'Please re-run with `load_figs_mafs=True` or add missing files.')
-                
-                
-        rd = PatientSampleData(
-            index=participant_df.index.tolist(),
+        return PatientSampleData(
+            index=index,
             description=description,
             participant_df=participant_df,
             sample_df=sample_df,
+            annot_df=annot_df,
+            annot_col_config_dict=annot_col_config_dict,
+            history_df=history_df
         )
-
-        return rd
 
     def set_default_review_data_annotations(self):
         """Set default annotation sections in the app"""
@@ -543,13 +535,13 @@ class PatientReviewer(ReviewerTemplate):
 
     def set_default_review_data_annotations_app_display(self):
         """Set the display of the components generated in set_default_review_data_annotations"""
-        self.add_review_data_annotations_app_display('Resistance Explained', 'radioitem')
-        self.add_review_data_annotations_app_display('Resistance Notes', 'textarea')
-        self.add_review_data_annotations_app_display('Growing Clones', 'text')
-        self.add_review_data_annotations_app_display('Shrinking Clones', 'text')
-        self.add_review_data_annotations_app_display('Annotations', 'checklist')
-        self.add_review_data_annotations_app_display('Selected Tree (idx)', 'number')
-        self.add_review_data_annotations_app_display('Other Notes', 'textarea')
+        self.add_annotation_display_component('Resistance Explained', RadioitemAnnotationDisplay())
+        self.add_annotation_display_component('Resistance Notes', TextAreaAnnotationDisplay())
+        self.add_annotation_display_component('Growing Clones', TextAnnotationDisplay())
+        self.add_annotation_display_component('Shrinking Clones', TextAnnotationDisplay())
+        self.add_annotation_display_component('Annotations', ChecklistAnnotationDisplay())
+        self.add_annotation_display_component('Selected Tree (idx)', NumberAnnotationDisplay())
+        self.add_annotation_display_component('Other Notes', TextAreaAnnotationDisplay())
 
     def gen_review_app(
         self,
