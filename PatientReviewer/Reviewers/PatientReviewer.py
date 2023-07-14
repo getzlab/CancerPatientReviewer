@@ -298,7 +298,7 @@ def collect_data(config_path):
     # if not os.path.exists(samples_file_name):
     #     combined_samples_df.to_csv(samples_file_name, sep='\t', index=False)
 
-    return [combined_samples_df, participants_df]
+    return combined_samples_df, participants_df
 
 def gen_clinical_data_table(df, idx):
     """Format clinical data into a dash DataTable.
@@ -545,7 +545,6 @@ class PatientReviewer(ReviewerTemplate):
 
     def gen_review_app(
         self,
-        preprocess_data_dir,
         custom_colors=None,
         drivers_fn=None,
     ) -> ReviewDataApp:
@@ -597,7 +596,7 @@ class PatientReviewer(ReviewerTemplate):
         if 'build_tree_posterior_fn' and 'cluster_ccfs_fn' in list(self.review_data_interface.data.participant_df):
             app.add_component(gen_phylogic_app_component(), drivers_fn=drivers_fn)
 
-        app.add_component(gen_cnv_plot_app_component(), preprocess_data_dir=preprocess_data_dir)
+        app.add_component(gen_cnv_plot_app_component())
 
         return app
 
