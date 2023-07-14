@@ -3,16 +3,14 @@
 Interactive dashboard for reviewing and annotating data on a patient-by-patient basis
 Includes app layout and callback functionality
 
-Run by the user with a Jupyter Notbook: UserPatientReviewer.ipynb
+Run by the user with a Jupyter Notebook: UserPatientReviewer.ipynb
 
 """
 
 import pandas as pd
 import numpy as np
-import pickle
 import os
-from dash import html
-from dash import Dash, dash_table
+from dash import html, dash_table
 from dash.dependencies import Output, State
 import dash_bootstrap_components as dbc
 import dalmatian
@@ -20,14 +18,14 @@ from typing import Dict, List
 import yaml
 import re
 
-from JupyterReviewer.Data import DataAnnotation
-from JupyterReviewer.ReviewDataApp import ReviewDataApp, AppComponent
-from JupyterReviewer.ReviewerTemplate import ReviewerTemplate
-from JupyterReviewer.AppComponents.MutationTableComponent import gen_mutation_table_app_component
-from JupyterReviewer.AppComponents.PhylogicComponents import gen_phylogic_app_component
-from JupyterReviewer.AppComponents.CNVPlotComponent import gen_cnv_plot_app_component
-from JupyterReviewer.DataTypes.PatientSampleData import PatientSampleData
-from JupyterReviewer.AnnotationDisplayComponent import NumberAnnotationDisplay, SelectAnnotationDisplay, TextAreaAnnotationDisplay, RadioitemAnnotationDisplay, ChecklistAnnotationDisplay, TextAnnotationDisplay
+from AnnoMate.Data import DataAnnotation
+from AnnoMate.ReviewDataApp import ReviewDataApp, AppComponent
+from AnnoMate.ReviewerTemplate import ReviewerTemplate
+from AnnoMate.AppComponents.MutationTableComponent import gen_mutation_table_app_component
+from AnnoMate.AppComponents.PhylogicComponents import gen_phylogic_app_component
+from AnnoMate.AppComponents.CNVPlotComponent import gen_cnv_plot_app_component
+from AnnoMate.DataTypes.PatientSampleData import PatientSampleData
+from AnnoMate.AnnotationDisplayComponent import NumberAnnotationDisplay, SelectAnnotationDisplay, TextAreaAnnotationDisplay, RadioitemAnnotationDisplay, ChecklistAnnotationDisplay, TextAnnotationDisplay
 
 def validate_string_list(x):
     if type(x) == str:
