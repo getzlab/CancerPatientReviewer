@@ -460,47 +460,6 @@ class PatientReviewer(ReviewerTemplate):
         ReviewData object
 
         """
-        # cnv_figs_dir = f'{preprocess_data_dir}/cnv_figs'  # todo make this logic better - what if all files don't exist?
-        # if not os.path.exists(cnv_figs_dir):
-        #     os.makedirs(cnv_figs_dir)
-        #     load_figs_mafs = True
-        # else:
-        #     print(f'cnv figs directory already exists: {cnv_figs_dir}')
-        #
-        # maf_dir = f'{preprocess_data_dir}/maf_df'
-        # if not os.path.exists(maf_dir):
-        #     os.makedirs(maf_dir)
-        #     load_figs_mafs = True
-        # else:
-        #     print(f'Maf directory already exists: {maf_dir}')
-        #
-        # participant_list = participant_df.index.tolist()
-        # sample_cnv_list = []
-        # participant_maf_list = []
-        # if load_figs_mafs:
-        #     for participant_id in participant_list:
-        #         sample_cnv_series, participant_maf_series = gen_preloaded_cnv_plot(participant_df, participant_id,
-        #                                                                            sample_df, preprocess_data_dir)
-        #         sample_cnv_list.append(sample_cnv_series)
-        #         participant_maf_list.append(participant_maf_series)
-        #
-        # else:  # todo - smarter "job avoidance"
-        #     for participant_id in participant_list:
-        #         maf_fn = f'{preprocess_data_dir}/maf_df/{participant_id}.maf_df.pkl'
-        #         participant_maf_list.append(pd.Series(maf_fn, [participant_id]))
-        #
-        #         sample_id_l = sample_df[sample_df['participant_id'] == participant_id].index
-        #         cnv_fn_l = [f'{preprocess_data_dir}/cnv_figs/{sample_id}.cnv_fig.pkl' for sample_id in sample_id_l]
-        #         sample_cnv_list.append(pd.Series(cnv_fn_l, sample_id_l))
-        #
-        # participant_maf_list = pd.concat(participant_maf_list)
-        # participant_df['maf_df_pickle'] = participant_maf_list
-        # sample_cnv_list = pd.concat(sample_cnv_list)
-        # sample_df['cnv_fig_pickle'] = sample_cnv_list
-        #
-        # if not all([os.path.isfile(v) for v in participant_maf_list.values.tolist() + sample_cnv_list.values.tolist()]):
-        #     raise ValueError(f'Not all participant mafs and sample cnv pickle files are present in {preprocess_data_dir}.\n'
-        #                      f'Please re-run with `load_figs_mafs=True` or add missing files.')
         if index is None:
             index = participant_df.index.tolist()
 
