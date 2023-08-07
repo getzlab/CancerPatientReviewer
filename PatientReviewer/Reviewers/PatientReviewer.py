@@ -333,7 +333,7 @@ def gen_clinical_data_table(df, idx):
     this_participant_df.reset_index(inplace=True)
     this_participant_df['index'] = this_participant_df['index'].apply(lambda x: default_cols[x] if x in default_cols else x.replace('_', ' '))
     this_participant_df.set_index('index')
-    this_participant_df = this_participant_df.replace(['unknown', 'not reported'], np.NaN)
+    this_participant_df = this_participant_df.replace(['not reported'], np.NaN)
     this_participant_df.dropna(inplace=True)
 
     return [dash_table.DataTable(
@@ -388,9 +388,10 @@ def gen_sample_data_table(df, idx):
     sample_cols = [col for col in list(df) if not (re.search('fn$|cram_or_bam|pickle$', col))]
     this_sample_df = df.loc[idx, sample_cols]
     this_sample_df.reset_index(drop=True, inplace=True)
-    this_sample_df.dropna(axis=1, how='all', inplace=True)
+    this_sample_df = this_sample_df.replace(['unknown', 'not reported', 'na', 'NA', '', np.nan], np.NaN)
+    this_sample_df.dropna(axis='columns', how='all', inplace=True)
 
-    formatted_cols = [{'name': default_cols[col], 'id': col} if col in default_cols else {'name': col.replace('_', ' '), 'id': col} for col in sample_cols ]
+    formatted_cols = [{'name': default_cols[col], 'id': col} if col in default_cols else {'name': col.replace('_', ' '), 'id': col} for col in list(this_sample_df) ]
 
     df.reset_index(inplace=True)
     df.set_index('sample_id', inplace=True)
@@ -475,30 +476,35 @@ class PatientReviewer(ReviewerTemplate):
 
     def set_default_review_data_annotations(self):
         """Set default annotation sections in the app"""
-        self.add_review_data_annotation('Resistance Explained', DataAnnotation('string',
-                                                                                     options=['Mutation', 'CNV',
-                                                                                              'Partial/Hypothesized',
-                                                                                              'Unknown']))
-        self.add_review_data_annotation('Resistance Notes', DataAnnotation('string'))
-        self.add_review_data_annotation('Growing Clones',
-                                        DataAnnotation('string', validate_input=validate_string_list))
-        self.add_review_data_annotation('Shrinking Clones',
-                                        DataAnnotation('string', validate_input=validate_string_list))
-        self.add_review_data_annotation('Annotations', DataAnnotation('multi', options=['Hypermutated',
-                                                                                               'Convergent Evolution',
-                                                                                               'Strong clonal changes']))
-        self.add_review_data_annotation('Selected Tree (idx)', DataAnnotation('int', default=1))
-        self.add_review_data_annotation('Other Notes', DataAnnotation('string'))
+        # self.add_review_data_annotation('Resistance Explained', DataAnnotation('string',
+        #                                                                              options=['Mutation', 'CNV',
+        #                                                                                       'Partial/Hypothesized',
+        #                                                                                       'Unknown']))
+        # self.add_review_data_annotation('Resistance Notes', DataAnnotation('string'))
+        # self.add_review_data_annotation('Growing Clones',
+        #                                 DataAnnotation('string', validate_input=validate_string_list))
+        # self.add_review_data_annotation('Shrinking Clones',
+        #                                 DataAnnotation('string', validate_input=validate_string_list))
+        # self.add_review_data_annotation('Annotations', DataAnnotation('multi', options=['Hypermutated',
+        #                                                                                        'Convergent Evolution',
+        #                                                                                        'Strong clonal changes']))
+        self.add_review_data_annotation('Selected Tree (idx)', DataAnnotation('string'))
+        # self.add_review_data_annotation('Other Notes', DataAnnotation('string'))
+
+        self.add_review_data_annotation('Status', DataAnnotation('string', options=['Keep', 'Re-Review', 'Remove']))
+        self.add_review_data_annotation('Notes', DataAnnotation('string'))
 
     def set_default_review_data_annotations_app_display(self):
         """Set the display of the components generated in set_default_review_data_annotations"""
-        self.add_annotation_display_component('Resistance Explained', RadioitemAnnotationDisplay())
-        self.add_annotation_display_component('Resistance Notes', TextAreaAnnotationDisplay())
-        self.add_annotation_display_component('Growing Clones', TextAnnotationDisplay())
-        self.add_annotation_display_component('Shrinking Clones', TextAnnotationDisplay())
-        self.add_annotation_display_component('Annotations', ChecklistAnnotationDisplay())
-        self.add_annotation_display_component('Selected Tree (idx)', NumberAnnotationDisplay())
-        self.add_annotation_display_component('Other Notes', TextAreaAnnotationDisplay())
+        # self.add_annotation_display_component('Resistance Explained', RadioitemAnnotationDisplay())
+        # self.add_annotation_display_component('Resistance Notes', TextAreaAnnotationDisplay())
+        # self.add_annotation_display_component('Growing Clones', TextAnnotationDisplay())
+        # self.add_annotation_display_component('Shrinking Clones', TextAnnotationDisplay())
+        # self.add_annotation_display_component('Annotations', ChecklistAnnotationDisplay())
+        self.add_annotation_display_component('Selected Tree (idx)', TextAnnotationDisplay())
+        # self.add_annotation_display_component('Other Notes', TextAreaAnnotationDisplay()) 
+        self.add_annotation_display_component('Status', RadioitemAnnotationDisplay())
+        self.add_annotation_display_component('Notes', TextAreaAnnotationDisplay())
 
     def gen_review_app(
         self,
@@ -554,7 +560,7 @@ class PatientReviewer(ReviewerTemplate):
             app.add_component(gen_phylogic_app_component(), drivers_fn=drivers_fn)
 
         app.add_component(gen_cnv_plot_app_component())
-
+        
         return app
 
 
