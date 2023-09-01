@@ -31,16 +31,18 @@ pip install -e .
 
 # Basic usage
 
-See [UserPatientReviewer.ipynb](https://github.com/getzlab/PatientReviewer/tree/master/example_notebooks/UserPatientReviewer.ipynb) for basic examples and demos of the patient reviewers.
+## Specify data in a config file
+
+Follow the patient_reviewer_input_template.yaml to format your data
+
+## Pass data in through a jupyter notebook and launch your dashboard
+
+- [UserPatientReviewer.ipynb](https://github.com/getzlab/PatientReviewer/tree/master/example_notebooks/UserPatientReviewer.ipynb): Example notebook showing how to pass in a config file and create custom components 
+- [SimulatedDataReviewer.ipynb](https://github.com/getzlab/PatientReviewer/tree/master/example_notebooks/SimulatedDataReviewer.ipynb): Example notebook running the AnnoMate simulated data 
 
 See `PatientReviewer/Reviewers` to see available pre-built reviewer options.
 
-See `PatientReviewer/DataTypes` to see pre-built data configurations for patient review.
-
-
 # Custom and advanced usage
-
-See `PatientReviewer/AppComponents` for pre-built components and their customizable parameters, and additional utility functions. 
 
 For customizing annotations, adding new components, and other features, see [Intro_to_Reviewers.ipynb](https://github.com/getzlab/JupyterReviewer/blob/master/example_notebooks/Intro_to_Reviewers.ipynb).
 

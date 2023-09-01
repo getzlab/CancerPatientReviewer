@@ -22,12 +22,13 @@ from AnnoMate.Data import DataAnnotation
 from AnnoMate.ReviewDataApp import ReviewDataApp, AppComponent
 from AnnoMate.ReviewerTemplate import ReviewerTemplate
 from AnnoMate.AppComponents.MutationTableComponent import gen_mutation_table_app_component
-from AnnoMate.AppComponents.PhylogicComponents import gen_phylogic_app_component
+from AnnoMate.AppComponents.PhylogicNDTComponents import gen_phylogicNDT_app_component
 from AnnoMate.AppComponents.CNVPlotComponent import gen_cnv_plot_app_component
 from AnnoMate.DataTypes.PatientSampleData import PatientSampleData
 from AnnoMate.AnnotationDisplayComponent import NumberAnnotationDisplay, SelectAnnotationDisplay, TextAreaAnnotationDisplay, RadioitemAnnotationDisplay, ChecklistAnnotationDisplay, TextAnnotationDisplay
 
 def validate_string_list(x):
+    """Ensure list passed in is a string and return as a list"""
     if type(x) == str:
         split_list = [i.strip().isdigit() for i in x.split(',')]
         return all(split_list)
@@ -41,7 +42,7 @@ def check_required_inputs(required_inputs):
             raise ValueError(f'Required input was not given: {input}')
 
 def parse_patient_reviewer_input(config_path):
-    """Parse config file, ensuring all required inputs are given.
+    """Parse config file and return as a dictionary.
 
     Parameters
     ----------
@@ -74,7 +75,7 @@ def parse_patient_reviewer_input(config_path):
     return config_dict
 
 def collect_data(config_path):
-    """Collect data from config file into sample and participant dataframes.
+    """Collect data from config file and organize into sample and participant dataframes.
 
     Parameters
     ----------
@@ -84,9 +85,9 @@ def collect_data(config_path):
     Returns
     -------
     combined_samples_df: pd.DataFrame()
-        All sample based data from config file
+        All sample level data from config file
     participants_df: pd.DataFrame()
-        All participant based data from config file
+        All participant level data from config file
 
     """
     config_dict = parse_patient_reviewer_input(config_path)
@@ -181,10 +182,10 @@ def collect_data(config_path):
     if unmatched_maf:
         sample_cols.append(unmatched_maf)
 
-    cluster_ccfs = config_dict['phylogic_files']['clusters_file']
+    cluster_ccfs = config_dict['phylogicNDT_files']['clusters_file']
     if cluster_ccfs:
         participant_cols.append(cluster_ccfs)
-    trees = config_dict['phylogic_files']['trees_file']
+    trees = config_dict['phylogicNDT_files']['trees_file']
     if trees:
         participant_cols.append(trees)
 
@@ -306,6 +307,7 @@ def gen_clinical_data_table(df, idx):
     df
         Participant level DataFrame
     idx
+        Index - current participant 
 
     Returns
     -------
@@ -351,6 +353,7 @@ def gen_sample_data_table(df, idx):
     df
         Sample level DataFrame
     idx
+        Index - current sample 
 
     Returns
     -------
@@ -421,7 +424,7 @@ class PatientReviewer(ReviewerTemplate):
     - Display clinical data
     - Display cusomizable mutation table
     - Display CCF plot
-    - Display Phylogic trees
+    - Display PhylogicNDT trees
     - Display cusomizable CNV plot
 
     """
@@ -510,6 +513,21 @@ class PatientReviewer(ReviewerTemplate):
         self,
         custom_colors=None,
         drivers_fn=None,
+        default_maf_sample_cols=[
+            't_ref_count',
+            't_alt_count',
+            'n_ref_count',
+            'n_alt_count',
+        ],
+        maf_hugo_col='Hugo_Symbol',
+        maf_chromosome_col='Chromosome',
+        maf_start_pos_col='Start_position',
+        maf_end_pos_col='End_position',
+        maf_protein_change_col='Protein_change',
+        maf_variant_class_col='Variant_Classification',
+        maf_cluster_col='Cluster_Assignment',
+        maf_sample_id_col='Sample_ID',
+        maf_participant_id_col='Patient_ID',
     ) -> ReviewDataApp:
         """Generate app layout.
 
@@ -520,6 +538,26 @@ class PatientReviewer(ReviewerTemplate):
             [[column_id_1, filter_query_1, text_color_1, background_color_1]]
         drivers_fn
             file path to csv file of drivers
+        default_maf_sample_cols
+            List of default columns to be displayed on the sample side of the mutation table 
+        maf_hugo_col
+            Name of the hugo symbol column in the maf file 
+        maf_chromosome_col
+            Name of the chromosome column in the maf file 
+        maf_start_pos_col
+            Name of the start position column in the maf file 
+        maf_end_pos_col
+            Name of the end position column in the maf file 
+        maf_protein_change_col
+            Name of the protein change column in the maf file 
+        maf_variant_class_col
+            Name of the variant classification column in the maf file 
+        maf_cluster_col
+            Name of the cluster assignment column in the maf file 
+        maf_sample_id_col
+            Name of the sample id column in the maf file 
+        maf_participant_id_col
+            Name of the participant id column in the maf file
 
         Returns
         -------
@@ -554,12 +592,41 @@ class PatientReviewer(ReviewerTemplate):
             new_data_callback=gen_clinical_sample_data_table
         ))
 
-        app.add_component(gen_mutation_table_app_component(), custom_colors=custom_colors)
+        app.add_component(
+            gen_mutation_table_app_component(), 
+            custom_colors=custom_colors, 
+            default_maf_sample_cols=default_maf_sample_cols, 
+            maf_hugo_col=maf_hugo_col, 
+            maf_chromosome_col=maf_chromosome_col, 
+            maf_start_pos_col=maf_start_pos_col, 
+            maf_end_pos_col=maf_end_pos_col, 
+            maf_protein_change_col=maf_protein_change_col, 
+            maf_variant_class_col=maf_variant_class_col, 
+            maf_cluster_col=maf_cluster_col, 
+            maf_sample_id_col=maf_sample_id_col
+        )
 
         if 'build_tree_posterior_fn' and 'cluster_ccfs_fn' in list(self.review_data_interface.data.participant_df):
-            app.add_component(gen_phylogic_app_component(), drivers_fn=drivers_fn)
+            app.add_component(
+                gen_phylogicNDT_app_component(), 
+                drivers_fn=drivers_fn, 
+                maf_participant_id_col=maf_participant_id_col,
+                maf_hugo_col=maf_hugo_col,
+                maf_chromosome_col=maf_chromosome_col,
+                maf_start_pos_col=maf_start_pos_col,
+                maf_cluster_col=maf_cluster_col
+            )
 
-        app.add_component(gen_cnv_plot_app_component())
+        app.add_component(
+            gen_cnv_plot_app_component(), 
+            maf_sample_id_col=maf_sample_id_col,
+            maf_start_pos_col=maf_start_pos_col,
+            maf_chromosome_col=maf_chromosome_col, 
+            maf_cluster_col=maf_cluster_col,
+            maf_hugo_col=maf_hugo_col,
+            maf_variant_class_col=maf_variant_class_col,
+            maf_protein_change_col=maf_protein_change_col
+        ) 
         
         return app
 
@@ -567,4 +634,4 @@ class PatientReviewer(ReviewerTemplate):
     def set_default_autofill(self):
         """Set default autofill functionality for annotations """
         if 'build_tree_posterior_fn' and 'cluster_ccfs_fn' in list(self.review_data_interface.data.participant_df):
-            self.add_autofill('Phylogic Tree', State('tree-dropdown', 'value'), 'Selected Tree (idx)')
+            self.add_autofill('PhylogicNDT Tree', State('tree-dropdown', 'value'), 'Selected Tree (idx)')
