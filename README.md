@@ -33,7 +33,7 @@ pip install -e .
 
 ## Specify data in a config file
 
-Follow the patient_reviewer_input_template.yaml to format your data
+Follow the [patient_reviewer_input_template.yaml](https://github.com/getzlab/PatientReviewer/tree/master/example_notebooks/patient_reviewer_input_template.yaml) to format your data
 
 ## Pass data in through a jupyter notebook and launch your dashboard
 
