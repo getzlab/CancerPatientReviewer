@@ -1,0 +1,89 @@
+# Template config file for passing data to the Patient Reviewer
+# Specifications in this file ensure that the Patient Reviewer can understand your data
+# All fields followed by a * are required 
+
+# workspace *
+# Terra workspace you would like to pull data from
+workspace: 
+
+# data path *
+# local path where you would like data to be stored
+data_path: 
+
+# sample and participant file names (default is samples.txt and participants.txt)
+# saved_files:
+#   sample_file: paired_analysis_clean_samples.txt
+#   participant_file: paired_analysis_clean_participants.txt
+
+# clinical data
+clinical_file:
+  # file name *
+  # name of the file containing your clinical data
+  file_name: 
+  # default clinical file column names 
+  # if none specified, all will be assigned default names 
+  # if some specified, only those will be shown
+  columns:
+    tumor_molecular_subtype:
+    tumor_morphology:
+    tumor_primary_site:
+    cancer_stage:
+    vital_status:
+    death_date_dfd:
+    follow_up_date:
+    age_at_diagnosis:
+    gender:
+    notes:
+  # list of additional clinical data columns not in the above default list
+  additional_columns:
+
+# maf files *
+maf_files:
+  # which Terra table the maf file is in
+  table_origin: # one of sample or participant
+  # name of the column in Terra that stores the maf files 
+  column_name: 
+  # name of the column in Terra that stores the unmatched maf files (optional)
+  unmatched_column_name: 
+
+# cnv files *
+cnv_files:
+  # name of the column in Terra that stores the alleliccapseg files 
+  column_name: 
+  # name of the column in Terra that stores the unmatched alleliccapseg files (optional)
+  unmatched_column_name: 
+
+# treatment file 
+# local path to the file containing treatment data
+treatment_file: 
+
+# sample column default column names (purity, ploidy, collection_date, preservation method, bait set, sample types)
+sample_columns:
+  columns:
+    # specified default columns. if none specified, all will be assigned default names 
+    # if some specified, defaults will be set for those unspecified
+    participant_id: 
+    collection_date: 
+    purity: 
+    ploidy: 
+    preservation_method: 
+    cram_bam_columns: # list of all cram_bam columns 
+  # list of additional sample data columns not in the above default list
+  additional_columns:
+
+pairs_columns:
+  # specified default columns. if none specified, all will be assigned default names 
+  # if some specified, defaults will be set for those unspecified
+  sample_id: 
+  participant_id: 
+  purity: 
+  ploidy: 
+
+
+# phylogicNDT file names 
+phylogicNDT_files:
+  # name of the column in Terra that stores the phylogicNDT cluster ccf files 
+  clusters_file: 
+  # name of the column in Terra that stores the phylogicNDT tree files 
+  trees_file: 
+
