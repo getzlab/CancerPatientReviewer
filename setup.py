@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="PatientReviewer",
+    name="CancerPatientReviewer",
     version="0.0.3",
     author="Conor Messer",
     author_email="cmesser@broadinstitute.org",
@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/getzlab/PatientReviewer",
     project_urls={
-        "Bug Tracker": "https://github.com/getzlab/PatientReviewer/issues",
+        "Bug Tracker": "https://github.com/getzlab/CancerPatientReviewer/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -23,7 +23,7 @@ setuptools.setup(
     package_dir={"": "."},
     packages=setuptools.find_packages(where="."),
     python_requires=">=3.6",
-    install_requires = ['AnnoMate==0.0.2',
+    install_requires = ['AnnoMate>=0.0.2', # recommend 0.0.3
                         'firecloud-dalmatian',
                         'pyyaml']
 )   

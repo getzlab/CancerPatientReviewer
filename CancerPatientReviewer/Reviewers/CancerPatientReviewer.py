@@ -1,9 +1,9 @@
-"""PatientReviewer.py module
+"""CancerPatientReviewer.py module
 
 Interactive dashboard for reviewing and annotating data on a patient-by-patient basis
 Includes app layout and callback functionality
 
-Run by the user with a Jupyter Notebook: UserPatientReviewer.ipynb
+Run by the user with a Jupyter Notebook: SimulatedData_CancerPatientReviewer.ipynb
 
 """
 
@@ -416,7 +416,7 @@ def gen_clinical_sample_data_table(data: PatientSampleData, idx):
     ]
 
 
-class PatientReviewer(ReviewerTemplate):
+class CancerPatientReviewer(ReviewerTemplate):
     """Interactively review multiple types of data on a patient-by-patient basis.
 
     Notes
@@ -528,6 +528,7 @@ class PatientReviewer(ReviewerTemplate):
         maf_cluster_col='Cluster_Assignment',
         maf_sample_id_col='Sample_ID',
         maf_participant_id_col='Patient_ID',
+        phylogicNDT_tree_meta_col='n_iter',
     ) -> ReviewDataApp:
         """Generate app layout.
 
@@ -558,6 +559,8 @@ class PatientReviewer(ReviewerTemplate):
             Name of the sample id column in the maf file 
         maf_participant_id_col
             Name of the participant id column in the maf file
+        phylogicNDT_tree_meta_col: Str or None
+            Name of column in build_tree_posterior_fn to include in the tree label dropdown inside PhylogicNDT Component
 
         Returns
         -------
@@ -614,7 +617,8 @@ class PatientReviewer(ReviewerTemplate):
                 maf_hugo_col=maf_hugo_col,
                 maf_chromosome_col=maf_chromosome_col,
                 maf_start_pos_col=maf_start_pos_col,
-                maf_cluster_col=maf_cluster_col
+                maf_cluster_col=maf_cluster_col,
+                tree_meta_col=phylogicNDT_tree_meta_col,
             )
 
         app.add_component(

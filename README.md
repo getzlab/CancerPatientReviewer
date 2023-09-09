@@ -1,4 +1,4 @@
-# PatientReviewer
+# CancerPatientReviewer
 
 A package for using and creating interactive dashboards for reviewing integrated Patient data interactively.
 
@@ -12,19 +12,19 @@ This is **_highly_** recommended to manage different dependencies required by di
 
 See [Set up Conda Environment](https://github.com/getzlab/JupyterReviewer/blob/master/README.md#set-up-conda-environment) for details on how to download conda and configure an environment.
     
-## Install PatientReviewer
+## Install CancerPatientReviewer
 
 Clone
 ```
-git clone git@github.com:getzlab/PatientReviewer.git
+git clone git@github.com:getzlab/CancerPatientReviewer.git --recurse-submodules
 
 # or in an existing repo
-git submodule add git@github.com:getzlab/PatientReviewer.git
+git submodule add git@github.com:getzlab/CancerPatientReviewer.git
 ```
 
 Install
 ```
-cd PatientReviewer
+cd CancerPatientReviewer
 conda activate <your_env>
 pip install -e .
 ```
@@ -37,8 +37,8 @@ Follow the [patient_reviewer_input_template.yaml](https://github.com/getzlab/Pat
 
 ## Pass data in through a jupyter notebook and launch your dashboard
 
-- [UserPatientReviewer.ipynb](https://github.com/getzlab/PatientReviewer/tree/master/example_notebooks/UserPatientReviewer.ipynb): Example notebook showing how to pass in a config file and create custom components 
-- [SimulatedDataReviewer.ipynb](https://github.com/getzlab/PatientReviewer/tree/master/example_notebooks/SimulatedDataReviewer.ipynb): Example notebook running the AnnoMate simulated data 
+- [UserPatientReviewer.ipynb](https://github.com/getzlab/CancerPatientReviewer/tree/master/example_notebooks/UserPatientReviewer.ipynb): Example notebook showing how to pass in a config file and create custom components 
+- [SimulatedData_CancerPatientReviewer.ipynb](https://github.com/getzlab/CancerPatientReviewer/tree/master/example_notebooks/SimulatedData_CancerPatientReviewer.ipynb): Example notebook running the AnnoMate simulated data 
 
 See `PatientReviewer/Reviewers` to see available pre-built reviewer options.
 
