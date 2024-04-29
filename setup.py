@@ -23,7 +23,7 @@ setuptools.setup(
     package_dir={"": "."},
     packages=setuptools.find_packages(where="."),
     python_requires=">=3.6",
-    install_requires = ['AnnoMate==0.0.2',
+    install_requires = ['AnnoMate==0.0.3',
                         'firecloud-dalmatian',
                         'pyyaml']
 )   
