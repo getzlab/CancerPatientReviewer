@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="PatientReviewer",
-    version="0.0.3",
+    version="1.0.0",
     author="Conor Messer",
     author_email="cmesser@broadinstitute.org",
     description="A tool to view integrated patient data using JupyterReviewer Plotly dashboard",
@@ -23,7 +23,7 @@ setuptools.setup(
     package_dir={"": "."},
     packages=setuptools.find_packages(where="."),
     python_requires=">=3.8", # last tested version: 3.9
-    install_requires = ['AnnoMate==0.0.3',
+    install_requires = ['AnnoMate==1.0.0',
                         'firecloud-dalmatian',
                         'pyyaml']
 )   
